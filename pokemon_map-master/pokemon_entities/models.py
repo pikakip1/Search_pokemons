@@ -49,12 +49,19 @@ class Pokemon(models.Model):
         'Венузавр': VENUZAUR_DESCRIPTION
     }
 
+    evolution_from = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+
     def __str__(self):
         return self.title
 
 
 class PokemonEntity(models.Model):
-    pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE)
+    pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE, blank=True)
 
     lat = models.FloatField()
     lon = models.FloatField()
