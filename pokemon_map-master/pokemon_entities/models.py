@@ -2,8 +2,14 @@ from django.db import models  # noqa F401
 
 
 class Pokemon(models.Model):
-    title = models.CharField(max_length=200, blank=True)
-    photo = models.ImageField(upload_to='pokemons_photo', blank=True)
+    title = models.CharField(
+        max_length=200,
+        verbose_name='Название покемона',
+        blank=True)
+    photo = models.ImageField(
+        upload_to='pokemons_photo',
+        verbose_name='Фото покемона',
+        blank=True)
 
     translate_name = {
         'Бульбазавр':
@@ -52,6 +58,7 @@ class Pokemon(models.Model):
     evolution_from = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
+        verbose_name='Эволюционировал из',
         related_name='evolution',
         blank=True,
         null=True
@@ -62,19 +69,23 @@ class Pokemon(models.Model):
 
 
 class PokemonEntity(models.Model):
-    pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE, blank=True)
+    pokemon = models.ForeignKey(
+        Pokemon,
+        on_delete=models.CASCADE,
+        verbose_name='Название покемона',
+        blank=True)
 
-    lat = models.FloatField()
-    lon = models.FloatField()
+    lat = models.FloatField(verbose_name='Широта')
+    lon = models.FloatField(verbose_name='Долгота')
 
-    appeared_at = models.DateTimeField()
-    disappeared_at = models.DateTimeField()
+    appeared_at = models.DateTimeField(verbose_name='Дата появления')
+    disappeared_at = models.DateTimeField(verbose_name='Дата исчезновения')
 
-    level = models.IntegerField(default=1)
-    health = models.IntegerField(default=100)
-    strength = models.IntegerField(default=100)
-    defence = models.IntegerField(default=100)
-    stamina = models.IntegerField(default=100)
+    level = models.IntegerField(default=1,verbose_name='Уровень')
+    health = models.IntegerField(default=100, verbose_name='Здоровье')
+    strength = models.IntegerField(default=100, verbose_name='Сила')
+    defence = models.IntegerField(default=100, verbose_name='Защита')
+    stamina = models.IntegerField(default=100, verbose_name='Выносливость')
 
     def __str__(self):
         return self.pokemon.title
