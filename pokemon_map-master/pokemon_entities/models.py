@@ -1,11 +1,13 @@
 from django.db import models  # noqa F401
 
+from django.utils import timezone
+
 
 class Pokemon(models.Model):
     title = models.CharField(
         max_length=200,
         verbose_name='Название покемона',
-        blank=True)
+        )
     photo = models.ImageField(
         upload_to='pokemons_photo',
         verbose_name='Фото покемона',
@@ -73,19 +75,19 @@ class PokemonEntity(models.Model):
         Pokemon,
         on_delete=models.CASCADE,
         verbose_name='Название покемона',
-        blank=True)
+        )
 
     lat = models.FloatField(verbose_name='Широта')
     lon = models.FloatField(verbose_name='Долгота')
 
     appeared_at = models.DateTimeField(verbose_name='Дата появления')
-    disappeared_at = models.DateTimeField(verbose_name='Дата исчезновения')
+    disappeared_at = models.DateTimeField(verbose_name='Дата исчезновения', blank=True, default=timezone.now)
 
-    level = models.IntegerField(default=1,verbose_name='Уровень')
-    health = models.IntegerField(default=100, verbose_name='Здоровье')
-    strength = models.IntegerField(default=100, verbose_name='Сила')
-    defence = models.IntegerField(default=100, verbose_name='Защита')
-    stamina = models.IntegerField(default=100, verbose_name='Выносливость')
+    level = models.IntegerField(default=1,verbose_name='Уровень', blank=True)
+    health = models.IntegerField(default=100, verbose_name='Здоровье', blank=True)
+    strength = models.IntegerField(default=100, verbose_name='Сила', blank=True)
+    defence = models.IntegerField(default=100, verbose_name='Защита', blank=True)
+    stamina = models.IntegerField(default=100, verbose_name='Выносливость', blank=True)
 
     def __str__(self):
         return self.pokemon.title
