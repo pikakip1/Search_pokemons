@@ -77,14 +77,7 @@ def show_pokemon(request, pokemon_id):
             request.build_absolute_uri(pokemon.photo.url)
         )
 
-    if pokemon.title == 'Венузавр':
-        evolution = 'Ивизавр'
-
-    else:
-        evolution = 'Бульбазавр'
-
-    pokemon_previous_evolution = Pokemon.objects.filter(title=evolution).last()
-    print(pokemon.evolution_)
+    pokemon_previous_evolution = pokemon.evolution_from
 
     pokemon_card = {
         'pokemon_id': pokemon.id,
