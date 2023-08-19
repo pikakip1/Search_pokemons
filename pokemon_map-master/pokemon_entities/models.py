@@ -52,6 +52,7 @@ class Pokemon(models.Model):
     evolution_from = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
+        related_name='evolution',
         blank=True,
         null=True
     )

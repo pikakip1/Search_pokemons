@@ -65,6 +65,15 @@ def show_all_pokemons(request):
     })
 
 
+def get_evolution(pokemon, request):
+    evolution = {}
+    if pokemon:
+        evolution['title_ru'] = pokemon
+        evolution['pokemon_id'] = pokemon.id
+        evolution['img_url'] = request.build_absolute_uri(pokemon.photo.url)
+    return evolution
+
+
 def show_pokemon(request, pokemon_id):
     pokemon = Pokemon.objects.get(id=pokemon_id)
 
@@ -77,7 +86,8 @@ def show_pokemon(request, pokemon_id):
             request.build_absolute_uri(pokemon.photo.url)
         )
 
-    pokemon_previous_evolution = pokemon.evolution_from
+    next_evolution_pokemon = get_evolution(pokemon.evolution.all().first(), request)
+    previous_evolution_pokemon = get_evolution(pokemon.evolution_from, request)
 
     pokemon_card = {
         'pokemon_id': pokemon.id,
@@ -86,12 +96,8 @@ def show_pokemon(request, pokemon_id):
         'description': pokemon.DESCRIPTION[pokemon.title],
         'title_en': pokemon.translate_name[pokemon.title]['title_en'],
         'title_jp': pokemon.translate_name[pokemon.title]['title_jp'],
-        'previous_evolution': {
-            'title_ru': pokemon_previous_evolution,
-            "pokemon_id": pokemon_previous_evolution.id,
-            'img_url': request.build_absolute_uri(pokemon_previous_evolution.photo.url)
-
-        }
+        'previous_evolution': dict(previous_evolution_pokemon),
+        'next_evolution': dict(next_evolution_pokemon)
     }
 
     return render(request, 'pokemon.html', context={
