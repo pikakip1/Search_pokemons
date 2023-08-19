@@ -81,13 +81,13 @@ class PokemonEntity(models.Model):
     lon = models.FloatField(verbose_name='Долгота')
 
     appeared_at = models.DateTimeField(verbose_name='Дата появления')
-    disappeared_at = models.DateTimeField(verbose_name='Дата исчезновения', blank=True, default=timezone.now)
+    disappeared_at = models.DateTimeField(verbose_name='Дата исчезновения', blank=True,null=True, default=timezone.now)
 
-    level = models.IntegerField(default=1,verbose_name='Уровень', blank=True)
-    health = models.IntegerField(default=100, verbose_name='Здоровье', blank=True)
-    strength = models.IntegerField(default=100, verbose_name='Сила', blank=True)
-    defence = models.IntegerField(default=100, verbose_name='Защита', blank=True)
-    stamina = models.IntegerField(default=100, verbose_name='Выносливость', blank=True)
+    level = models.IntegerField(default=1,verbose_name='Уровень', null=True,blank=True)
+    health = models.IntegerField(default=100, verbose_name='Здоровье',null=True,blank=True)
+    strength = models.IntegerField(default=100, verbose_name='Сила', null=True,blank=True)
+    defence = models.IntegerField(default=100, verbose_name='Защита', null=True,blank=True)
+    stamina = models.IntegerField(default=100, verbose_name='Выносливость', null=True, blank=True)
 
     def __str__(self):
         return self.pokemon.title
