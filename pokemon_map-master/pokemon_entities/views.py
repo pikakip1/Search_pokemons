@@ -1,6 +1,6 @@
 import folium
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from pokemon_entities.models import Pokemon, PokemonEntity
 
@@ -27,17 +27,15 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 
 def show_all_pokemons(request):
-    all_pokemons = Pokemon.objects.all()
-
     moscow_time = timezone.localtime()
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
-    pokemon_entity = PokemonEntity.objects.filter(
+    pokemon_entities = PokemonEntity.objects.filter(
         disappeared_at__gt=moscow_time,
         appeared_at__lt=moscow_time
     )
 
-    for pokemon_entity in pokemon_entity:
+    for pokemon_entity in pokemon_entities:
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
@@ -45,6 +43,7 @@ def show_all_pokemons(request):
         )
 
     pokemons_on_page = []
+    all_pokemons = Pokemon.objects.all()
 
     for pokemon in all_pokemons:
         pokemons_on_page.append({
@@ -69,30 +68,27 @@ def get_evolution(pokemon, request):
 
 
 def show_pokemon(request, pokemon_id):
-    pokemon_cards = PokemonEntity.objects.filter(pokemon_id=pokemon_id)
-
-    pokemon_card = pokemon_cards[0].pokemon.pokemon_entity.first().pokemon
-
+    card_pokemon = get_object_or_404(Pokemon, id=pokemon_id)
+    pokemon_entities = PokemonEntity.objects.filter(pokemon=card_pokemon)
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
-    for pokemon_entity in pokemon_cards:
-        pokemon_img = pokemon_entity.pokemon.pokemon_entity.first().pokemon.photo.url
+    for entity in pokemon_entities:
         add_pokemon(
-            folium_map, pokemon_entity.lat,
-            pokemon_entity.lon,
-            request.build_absolute_uri(pokemon_img)
+            folium_map, entity.lat,
+            entity.lon,
+            request.build_absolute_uri(card_pokemon.photo.url)
         )
 
-    next_evolution_pokemon = get_evolution(pokemon_card.next_evolution.all().first(), request)
-    previous_evolution_pokemon = get_evolution(pokemon_card.evolution_from, request)
+    next_evolution_pokemon = get_evolution(card_pokemon.next_evolutions.first(), request)
+    previous_evolution_pokemon = get_evolution(card_pokemon.previous_evolution, request)
 
     pokemon_card = {
-        'pokemon_id': pokemon_card.id,
-        'title_ru': pokemon_card.title,
-        'img_url': request.build_absolute_uri(pokemon_card.photo.url),
-        'description': pokemon_card.description,
-        'title_en': pokemon_card.eng_name,
-        'title_jp': pokemon_card.jap_name,
+        'pokemon_id': card_pokemon.id,
+        'title_ru': card_pokemon.title,
+        'img_url': request.build_absolute_uri(card_pokemon.photo.url),
+        'description': card_pokemon.description,
+        'title_en': card_pokemon.eng_name,
+        'title_jp': card_pokemon.jap_name,
         'previous_evolution': dict(previous_evolution_pokemon),
         'next_evolution': dict(next_evolution_pokemon)
     }
